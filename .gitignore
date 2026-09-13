@@ -1,0 +1,35 @@
+# Project working files (drafts, notes, scratch assets — not part of the site)
+_work/
+
+# OS-generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies (in case tooling gets added later)
+node_modules/
+
+# Environment / secrets
+.env
+.env.local
+
+# Misc build/temp output
+dist/
+build/
+*.tmp

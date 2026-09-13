@@ -4,7 +4,7 @@ A single-file, interactive "under construction" landing page built to look and f
 
 ## Preview
 
-A desktop-style terminal window sits centered on a warm gradient background (inspired by the classic Ubuntu desktop). Visitors can actually type into it, run a handful of real-feeling shell commands, and get pointed to our Facebook community through a native-style desktop notification.
+A desktop-style terminal window sits centered on a well recognizable background (inspired by the classic Ubuntu desktop). Visitors can actually type into it, run a handful of real-feeling shell commands, and get pointed to our Facebook community through a native-style desktop notification.
 
 ## Features
 
@@ -38,7 +38,7 @@ Plain HTML, CSS, and vanilla JavaScript — no build step, no dependencies. Ever
 Just open the file in a browser:
 
 ```bash
-open linux-terminal.html
+open index.html
 ```
 
 Or serve it locally (recommended for testing on mobile via your local network):
@@ -47,7 +47,7 @@ Or serve it locally (recommended for testing on mobile via your local network):
 python3 -m http.server 8000
 ```
 
-Then visit `http://localhost:8000/linux-terminal.html`.
+Then visit `http://localhost:8000/index.html`.
 
 ## Customization
 
@@ -58,7 +58,7 @@ A couple of values are worth knowing about near the top of the `<script>` block:
 
 ## Community
 
-We're an open-source community based in Zambia. Come say hello and follow along:
+We're a code/tech community based in Zambia. Come say hello and follow along:
 
 - Facebook: https://www.facebook.com/groups/1421088291504611/
 
@@ -70,4 +70,4 @@ In short: anyone is free to use, modify, and redistribute this code, including c
 
 ## Contributing
 
-Contributions, issues, and suggestions are welcome. If you use or adapt this project, we'd appreciate a mention or link back to Zambian Programmers.
+Contributions, issues, and suggestions are welcome. If you use or adapt this project, we'd appreciate a mention or link back to Zambian Programmers. 🙂
