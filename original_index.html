@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -53,6 +53,28 @@
       linear-gradient(135deg, #6e1f4a 0%, #97242f 22%, #c03a1f 48%, #d95c1d 72%, #ee7f24 100%);
   }
 
+  /* subtle decorative ring, evocative of a distro logo without copying one */
+  .ring{
+    position: fixed;
+    top: 4%;
+    right: 5%;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.12);
+    pointer-events: none;
+  }
+  .ring::before, .ring::after{
+    content:'';
+    position:absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.14);
+  }
+  .ring::before{ top: -5px; left: 50%; transform: translateX(-50%); }
+  .ring::after{ bottom: 6px; right: 6px; }
+
   .terminal{
     display: flex;
     flex-direction: column;
@@ -61,7 +83,7 @@
     background: var(--term-bg);
     border-radius: 8px;
     overflow: hidden;
-    margin-top: 3rem;
+    margin-top: 2rem;
     box-shadow:
       0 25px 60px rgba(0,0,0,0.45),
       0 0 0 1px rgba(0,0,0,0.35);
@@ -76,7 +98,6 @@
     background: linear-gradient(180deg, var(--bar-top), var(--bar-bottom));
     -webkit-user-select: none;
     user-select: none;
-    cursor: pointer;
   }
 
   .tl-left{
@@ -141,13 +162,28 @@
     overflow-y: auto;
     background: radial-gradient(120% 100% at 50% 0%, var(--term-bg) 0%, var(--term-bg-2) 100%);
     color: var(--green);
-    font-size: clamp(13px, 1.7vw, 16px);
+    font-size: clamp(15px, 1.7vw, 17px);
     line-height: 1.5;
     cursor: text;
   }
 
   .term-body::-webkit-scrollbar{ width: 8px; }
   .term-body::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.18); border-radius: 4px; }
+
+  .watermark{
+    position: absolute;
+    right: 14px;
+    bottom: 10px;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    opacity: 0.14;
+    pointer-events: none;
+    color: #ffffff;
+    user-select: none;
+  }
+  .watermark span{ font-size: 26px; font-weight: 700; letter-spacing: 1px; }
+  .watermark svg{ width: 46px; height: 46px; }
 
   .line{
     white-space: pre-wrap;
@@ -206,6 +242,8 @@
       max-height: none;
       border-radius: 10px;
     }
+    .ring{ display: none; }
+    .watermark{ transform: scale(0.8); transform-origin: bottom right; }
   }
 
   /* native-style desktop notification (GNOME/libnotify look) */
@@ -217,7 +255,7 @@
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    min-width: 260px;
+    min-width: 300px;
     max-width: min(88vw, 380px);
     padding: 12px 14px;
     background: rgba(32, 30, 34, 0.92);
@@ -241,6 +279,7 @@
     width: 30px;
     height: 30px;
     border-radius: 7px;
+    /*background: linear-gradient(160deg, #3fe273, #1d8a45);*/
     display: flex;
     align-items: center;
     justify-content: center;
@@ -288,15 +327,16 @@
 </head>
 <body>
 
+  <!-- Linux styled terminal begins here. -->
   <div class="terminal" id="terminal">
-    <div class="titlebar" id="titlebar">
+    <div class="titlebar">
       <div class="tl-left">
         <span class="dot-close">
           <svg viewBox="0 0 10 10"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#4a0f0c" stroke-width="1.6" stroke-linecap="round"/></svg>
         </span>
         <span class="sq-btn"></span>
       </div>
-      <div class="tl-title"><span id="tbUser">user</span>@zambian.dev:~$</div>
+      <div class="tl-title">user@zambians.dev:~$</div>
       <div class="tl-right">
         <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><line x1="21" y1="21" x2="15.5" y2="15.5"/></svg>
         <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
@@ -309,18 +349,24 @@
     </div>
 
     <div class="term-body" id="termBody">
+      <!--div class="watermark">
+        <svg viewBox="0 0 100 100"><ellipse cx="50" cy="58" rx="26" ry="34" fill="#fff"/><ellipse cx="50" cy="30" rx="17" ry="16" fill="#fff"/><ellipse cx="43" cy="30" rx="4" ry="5" fill="#111"/><ellipse cx="57" cy="30" rx="4" ry="5" fill="#111"/><path d="M50 34 l-5 6 l10 0 z" fill="#e2a020"/></svg>
+        <span>Linux</span>
+      </div-->
       <div id="lines"></div>
       <div class="prompt-line" id="promptLine">
-        <span class="c-user" id="promptUser">user</span><span class="c-user">@zambians.dev</span><span class="c-white">:</span><span class="c-path">~</span><span class="c-white">$</span><span>&nbsp;</span><span id="typed"></span><span class="cursor" id="cursor"></span>
+        <span class="c-user">user@zambians.dev</span><span class="c-white">:</span><span class="c-path">~</span><span class="c-white">$</span><span>&nbsp;</span><span id="typed"></span><span class="cursor" id="cursor"></span>
       </div>
     </div>
   </div>
 
   <input id="hiddenInput" type="text" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false">
 
+  <!-- Native-style desktop notification (GNOME/libnotify look) -->
   <div class="notification" id="notification">
     <div class="notification-icon">
-      <img src="./zambian_programmers_logo_dark.jpg" alt="" width="32" height="32">
+        <img src="./zambian_programmers_logo_dark.jpg" alt="" width="32" height="32">
+      <!--svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg-->
     </div>
     <div class="notification-body">
       <div class="notification-app" id="notifApp">zambians.dev</div>
@@ -337,7 +383,8 @@
   const cursorEl   = document.getElementById('cursor');
   const input      = document.getElementById('hiddenInput');
   const terminalEl = document.getElementById('terminal');
-  const titlebarEl = document.getElementById('titlebar');
+  const titlebarEl = document.querySelector('.titlebar');
+
   const notifEl    = document.getElementById('notification');
   const notifApp   = document.getElementById('notifApp');
   const notifTitle = document.getElementById('notifTitle');
@@ -346,29 +393,6 @@
 
   // Developer's name, appended to `neofetch` output.
   const DEVELOPER_NAME = 'cholasimmons';
-
-  const USERNAME_COOKIE = 'zt_username';
-  const DEFAULT_USERNAME = 'user';
-  const tbUserEl = document.getElementById('tbUser');
-  const promptUserEl = document.getElementById('promptUser');
-
-  function setCookie(name, value, days){
-    const d = new Date();
-    d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
-  }
-
-  function getCookie(name){
-    const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-    return match ? decodeURIComponent(match[1]) : null;
-  }
-
-  let currentUsername = getCookie(USERNAME_COOKIE) || DEFAULT_USERNAME;
-
-  function applyUsername(){
-    tbUserEl.textContent = currentUsername;
-    promptUserEl.textContent = currentUsername;
-  }
 
   let cmdHistory = [];
   let histIndex = -1;
@@ -380,7 +404,7 @@
   }
 
   function promptMarkup(){
-    return '<span class="c-user">' + escapeHtml(currentUsername) + '@zambians.dev</span><span class="c-white">:</span><span class="c-path">~</span><span class="c-white">$</span>';
+    return '<span class="c-user">user@zambians.dev</span><span class="c-white">:</span><span class="c-path">~</span><span class="c-white">$</span>';
   }
 
   function addLine(html){
@@ -395,14 +419,13 @@
   }
 
   function neofetchOutput(){
-    const header = currentUsername + '@zambians.dev';
     return [
-      header,
-      '-'.repeat(header.length),
+      'user@zambians.dev',
+      '------------------',
       'OS: Ubuntu 24.04 LTS x86_64',
       'Kernel: 6.8.0-generic',
       'Shell: bash 5.2',
-      'Terminal: zambians.dev',
+      'Terminal: zambian-term',
       'CPU: Virtual Core (4)',
       'Memory: 2048MiB / 7860MiB',
       'Developer: ' + escapeHtml(DEVELOPER_NAME)
@@ -415,7 +438,7 @@
     }
     return 'Linux';
   }
-
+ 
   function showNotification(title, body, appLabel, url){
     notifApp.textContent = appLabel || 'zambians.dev';
     notifTitle.textContent = title || '';
@@ -432,19 +455,16 @@
     }
 
     clearTimeout(notifHideTimeout);
-    notifHideTimeout = setTimeout(hideNotification, 5000);
+    notifHideTimeout = setTimeout(hideNotification, 8000);
   }
-
+ 
   function hideNotification(){
     notifEl.classList.remove('show');
     clearTimeout(notifHideTimeout);
   }
-
-  notifClose.addEventListener('click', (e) => {
-    e.stopPropagation();
-    hideNotification();
-  });
-
+ 
+  notifClose.addEventListener('click', hideNotification);
+ 
   // Parses: notify-send "Title" "Optional body"  (also allows unquoted single-word args)
   function parseNotifyArgs(str){
     const re = /"([^"]*)"|'([^']*)'|(\S+)/g;
@@ -471,24 +491,11 @@
 
     switch(name){
       case 'help':
-        addLine('Available commands: help, whoami, pwd, ls, date, echo, uname, su, notify-send, neofetch, history, clear');
+        addLine('Available commands: help, whoami, pwd, ls, date, echo, neofetch, history, clear');
         break;
       case 'whoami':
-        addLine(currentUsername);
+        addLine('user');
         break;
-      case 'su': {
-        const newName = parts[1];
-        if(!newName){
-          addLine('<span class="c-dim">Usage: su &lt;username&gt;</span>');
-        } else if(!/^[A-Za-z_][A-Za-z0-9_-]{0,20}$/.test(newName)){
-          addLine('su: invalid user name &#39;' + escapeHtml(newName) + '&#39;');
-        } else {
-          currentUsername = newName;
-          setCookie(USERNAME_COOKIE, currentUsername, 365);
-          applyUsername();
-        }
-        break;
-      }
       case 'pwd':
         addLine('/home/user');
         break;
@@ -507,7 +514,7 @@
       case 'history':
         addLine(cmdHistory.map((h, i) => (i + 1) + '  ' + escapeHtml(h)).join('<br>'));
         break;
-      case 'neofetch':
+        case 'neofetch':
         addLine(neofetchOutput());
         break;
       case 'uname':
@@ -592,9 +599,8 @@
   titlebarEl.addEventListener('click', announceFacebookGroup);
   // On page load, the terminal's input field is focused and the native-style desktop notification is displayed the first time.
   window.addEventListener('load', () => {
-    applyUsername();
     input.focus();
-    setTimeout(announceFacebookGroup, 1200);
+    setTimeout(announceFacebookGroup, 2800);
   });
 </script>
 </body>
