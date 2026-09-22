@@ -1,5 +1,6 @@
 //pure function
-import { notifEl, currentUsername, linesEl } from "./_exports.js"
+import { notifEl, currentUsername, linesEl, cursorEl, FACEBOOK_URL } from "./_exports.js"
+let blinkTimeout = null;
 export const getCookie = (name) => {
   const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
   return match ? decodeURIComponent(match[1]) : null;
@@ -63,3 +64,16 @@ export function parseNotifyArgs(str) {
 }
 
 
+export function pauseBlink() {
+  cursorEl.classList.add('typing');
+  clearTimeout(blinkTimeout);
+  blinkTimeout = setTimeout(() => cursorEl.classList.remove('typing'), 450);
+}
+export function announceFacebookGroup() {
+  showNotification(
+    'Website in development',
+    'Follow Zambian Programmers on Facebook',
+    'zambians.dev',
+    FACEBOOK_URL
+  );
+}

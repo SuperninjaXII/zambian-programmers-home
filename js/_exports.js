@@ -16,6 +16,7 @@ export const tbUserEl = document.getElementById('tbUser');
 export const promptUserEl = document.getElementById('promptUser');
 export const USERNAME_COOKIE = 'zt_username';
 export const DEFAULT_USERNAME = 'user';
+export const FACEBOOK_URL = 'https://www.facebook.com/groups/1421088291504611/';
 
 export var currentUsername = getCookie(USERNAME_COOKIE) || DEFAULT_USERNAME;
 
