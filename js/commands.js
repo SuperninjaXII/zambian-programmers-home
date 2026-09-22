@@ -1,7 +1,6 @@
 
-import { tbUserEl, promptUserEl, currentUsername } from "./_exports.js";
+import { DEVELOPER_NAME, tbUserEl, promptUserEl, currentUsername } from "./_exports.js";
 import { escapeHtml } from "./util.js";
-const DEVELOPER_NAME = 'cholasimmons';
 
 export function applyUsername() {
   tbUserEl.textContent = currentUsername;

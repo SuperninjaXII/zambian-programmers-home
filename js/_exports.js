@@ -14,6 +14,7 @@ export const notifText = document.getElementById('notifText');
 export const notifClose = document.getElementById('notifClose');
 export const tbUserEl = document.getElementById('tbUser');
 export const promptUserEl = document.getElementById('promptUser');
+export const DEVELOPER_NAME = 'cholasimmons';
 export const USERNAME_COOKIE = 'zt_username';
 export const DEFAULT_USERNAME = 'user';
 export const FACEBOOK_URL = 'https://www.facebook.com/groups/1421088291504611/';
