@@ -1,128 +1,12 @@
-const termBody = document.getElementById('termBody');
-const linesEl = document.getElementById('lines');
-const typedEl = document.getElementById('typed');
-const cursorEl = document.getElementById('cursor');
-const input = document.getElementById('hiddenInput');
-const terminalEl = document.getElementById('terminal');
-const titlebarEl = document.getElementById('titlebar');
-const notifEl = document.getElementById('notification');
-const notifApp = document.getElementById('notifApp');
-const notifTitle = document.getElementById('notifTitle');
-const notifText = document.getElementById('notifText');
-const notifClose = document.getElementById('notifClose');
-
+import { currentUsername, linesEl, typedEl, cursorEl, input, terminalEl, titlebarEl, notifClose, USERNAME_COOKIE } from "./_exports.js";
+import { setCookie, escapeHtml, promptMarkup, hideNotification, showNotification, parseNotifyArgs, scrollToBottom, addLine } from "./util.js";
+import { applyUsername, neofetchOutput, unameOutput } from "./commands.js";
 // Developer's name, appended to `neofetch` output.
-const DEVELOPER_NAME = 'cholasimmons';
-
-const USERNAME_COOKIE = 'zt_username';
-const DEFAULT_USERNAME = 'user';
-const tbUserEl = document.getElementById('tbUser');
-const promptUserEl = document.getElementById('promptUser');
-
-function setCookie(name, value, days) {
-  const d = new Date();
-  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
-}
-
-function getCookie(name) {
-  const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
-let currentUsername = getCookie(USERNAME_COOKIE) || DEFAULT_USERNAME;
-
-function applyUsername() {
-  tbUserEl.textContent = currentUsername;
-  promptUserEl.textContent = currentUsername;
-}
 
 let cmdHistory = [];
 let histIndex = -1;
 let blinkTimeout = null;
-let notifHideTimeout = null;
-
-function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
-
-function promptMarkup() {
-  return '<span class="c-user">' + escapeHtml(currentUsername) + '@zambians.dev</span><span class="c-white">:</span><span class="c-path">~</span><span class="c-white">$</span>';
-}
-
-function addLine(html) {
-  const div = document.createElement('div');
-  div.className = 'line';
-  div.innerHTML = html;
-  linesEl.appendChild(div);
-}
-
-function scrollToBottom() {
-  termBody.scrollTop = termBody.scrollHeight;
-}
-
-function neofetchOutput() {
-  const header = currentUsername + '@zambians.dev';
-  return [
-    header,
-    '-'.repeat(header.length),
-    'OS: Ubuntu 24.04 LTS x86_64',
-    'Kernel: 6.8.0-generic',
-    'Shell: bash 5.2',
-    'Terminal: zambians.dev',
-    'CPU: Virtual Core (4)',
-    'Memory: 2048MiB / 7860MiB',
-    'Developer: ' + escapeHtml(DEVELOPER_NAME)
-  ].join('<br>');
-}
-
-function unameOutput(flag) {
-  if (flag === '-a') {
-    return 'Linux zambians-dev 6.8.0-51-generic #52-Ubuntu SMP PREEMPT_DYNAMIC x86_64 GNU/Linux';
-  }
-  return 'Linux';
-}
-
-function showNotification(title, body, appLabel, url) {
-  notifApp.textContent = appLabel || 'zambians.dev';
-  notifTitle.textContent = title || '';
-  notifText.textContent = body || '';
-  notifText.style.display = body ? 'block' : 'none';
-  notifEl.classList.add('show');
-
-  if (url) {
-    notifEl.style.cursor = 'pointer';
-    notifEl.onclick = () => window.open(url, '_blank', 'noopener');
-  } else {
-    notifEl.style.cursor = 'default';
-    notifEl.onclick = null;
-  }
-
-  clearTimeout(notifHideTimeout);
-  notifHideTimeout = setTimeout(hideNotification, 5000);
-}
-
-function hideNotification() {
-  notifEl.classList.remove('show');
-  clearTimeout(notifHideTimeout);
-}
-
-notifClose.addEventListener('click', (e) => {
-  e.stopPropagation();
-  hideNotification();
-});
-
-// Parses: notify-send "Title" "Optional body"  (also allows unquoted single-word args)
-function parseNotifyArgs(str) {
-  const re = /"([^"]*)"|'([^']*)'|(\S+)/g;
-  const out = [];
-  let m;
-  while ((m = re.exec(str)) !== null) {
-    out.push(m[1] !== undefined ? m[1] : (m[2] !== undefined ? m[2] : m[3]));
-  }
-  return out;
-}
-
+let currentusername = currentUsername
 function runCommand(raw) {
   const cmd = raw.trim();
   addLine(promptMarkup() + '&nbsp;<span class="c-input">' + escapeHtml(raw) + '</span>');
@@ -141,7 +25,7 @@ function runCommand(raw) {
       addLine('Available commands: help, whoami, pwd, ls, date, echo, uname, su, notify-send, neofetch, history, clear');
       break;
     case 'whoami':
-      addLine(currentUsername);
+      addLine(currentusername);
       break;
     case 'su': {
       const newName = parts[1];
@@ -150,8 +34,8 @@ function runCommand(raw) {
       } else if (!/^[A-Za-z_][A-Za-z0-9_-]{0,20}$/.test(newName)) {
         addLine('su: invalid user name &#39;' + escapeHtml(newName) + '&#39;');
       } else {
-        currentUsername = newName;
-        setCookie(USERNAME_COOKIE, currentUsername, 365);
+        currentusername = newName;
+        setCookie(USERNAME_COOKIE, currentusername, 365);
         applyUsername();
       }
       break;
@@ -207,6 +91,11 @@ function pauseBlink() {
   clearTimeout(blinkTimeout);
   blinkTimeout = setTimeout(() => cursorEl.classList.remove('typing'), 450);
 }
+
+notifClose.addEventListener('click', (e) => {
+  e.stopPropagation();
+  hideNotification();
+});
 
 input.addEventListener('input', () => {
   typedEl.textContent = input.value;
